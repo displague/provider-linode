@@ -1,24 +1,28 @@
-title: "Linode Stack (demo)"
+title: "Linode Provider"
 readme: |-
-  ## Linode Stack
-  ### Demo
-  This is **only** a demo.
+  ## Linode Provider
+  ### Details
+  This is a provider for Linode.
 overview: |-
-  Linode Stack for demonstration purposes.
-overviewShort: "Linode Stack for demonstration purposes"
+  Linode Provider.
+overviewShort: "Linode Provider"
 version: 0.0.1
 maintainers:
 - name: "Marques Johansson"
-  email: "marques@upbound.io"
+  email: "marques@displague.com"
 owners:
 - name: "Marques Johansson"
-  email: "marques@upbound.io"
-company: "Crossplane"
-category: ""
+  email: "marques@displague.com"
+company: "Linode"
+category: "Infrastructure"
 keywords:
  - "linode"
-website: "https://github.com/crossplane/tbs"
-source: "https://github.com/displague/stack-linode-demo"
+website: "https://github.com/displague/crossplane-provider-linode"
+source: "https://github.com/displague/crossplane-provider-linode"
+packageType: Provider
+keywords:
+- "linode"
+- "infrastructure"
 # RBAC ClusterRoles will be generated permitting this stack to use all verbs on all
 # resources in the groups listed below.
 permissionScope: Cluster

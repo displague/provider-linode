@@ -19,8 +19,8 @@ Kubebuilder offers an easy way to get a Kubernetes controller project
 bootstrapped.  Like any framework, Kubebuilder has a set of features, rules,
 and opinions.
 
-At the core of [Crossplane's own managed resources](https://github.com/crossplaneio/crossplane/tree/master/apis) and [infrastructure Stacks](https://github.com/crossplaneio?utf8=%E2%9C%93&q=stack-&type=&language=),
-you'll find the [Crossplane Runtime](https://github.com/crossplaneio/crossplane-runtime).  This underpinning of Crossplane offers
+At the core of [Crossplane's own managed resources](https://github.com/crossplane/crossplane/tree/master/apis) and [infrastructure Stacks](https://github.com/crossplaneio?utf8=%E2%9C%93&q=stack-&type=&language=),
+you'll find the [Crossplane Runtime](https://github.com/crossplane/crossplane-runtime).  This underpinning of Crossplane offers
 an improved experience for state reconciliation.  It provides a number of hooks that
 come in handy when creating a Stack or any managed resource controller working
 in the narrow field of cloud resource provisioning.

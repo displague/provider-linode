@@ -1,64 +1,58 @@
+# Set the shell to bash always
+SHELL := /bin/bash
 
-# Image URL to use all building/pushing image targets
-IMG ?= controller:latest
-# Produce CRDs that work back to Kubernetes 1.11 (no version conversion)
-CRD_OPTIONS ?= "crd:trivialVersions=true"
+# Options
+ORG_NAME=displague
+PROVIDER_NAME=crossplane-provider-linode
 
-all: manager
+# Stack setup
+STACK_PACKAGE=stack-package
+export STACK_PACKAGE
+STACK_PACKAGE_REGISTRY=$(STACK_PACKAGE)/.registry
+STACK_PACKAGE_REGISTRY_SOURCE=config/stack/manifests
 
-# Run tests
-test: generate fmt vet manifests
-	go test ./api/... ./controllers/... -coverprofile cover.out
+build: generate build-stack-package test
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o ./bin/$(PROVIDER_NAME)-controller cmd/provider/main.go
 
-# Build manager binary
-manager: generate fmt vet
-	go build -o bin/manager main.go
+image: generate build-stack-package test
+	docker build . -t $(ORG_NAME)/$(PROVIDER_NAME):latest -f cluster/Dockerfile
 
-# Run against the configured Kubernetes cluster in ~/.kube/config
-run: generate fmt vet
-	go run ./main.go
+image-push:
+	docker push $(ORG_NAME)/$(PROVIDER_NAME):latest
 
-# Install CRDs into a cluster
-install: manifests
-	kubectl apply -f config/crd/bases
+all: image image-push
 
-# Deploy controller in the configured Kubernetes cluster in ~/.kube/config
-deploy: manifests
-	kubectl apply -f config/crd/bases
-	kustomize build config/default | kubectl apply -f -
+generate:
+	go generate ./...
 
-# Generate manifests e.g. CRD, RBAC etc.
-manifests: controller-gen
-	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./api/...;./controllers/..." output:crd:artifacts:config=config/crd/bases
+tidy:
+	go mod tidy
 
-# Run go fmt against code
-fmt:
-	go fmt ./...
+test:
+	go test -v ./...
 
-# Run go vet against code
-vet:
-	go vet ./...
+# ====================================================================================
+# Stacks related targets
 
-# Generate code
-generate: controller-gen
-	$(CONTROLLER_GEN) object:headerFile=./hack/boilerplate.go.txt paths=./api/...
+# Initialize the stack package folder
+$(STACK_PACKAGE_REGISTRY):
+	@mkdir -p $(STACK_PACKAGE_REGISTRY)/resources
+	@touch $(STACK_PACKAGE_REGISTRY)/app.yaml $(STACK_PACKAGE_REGISTRY)/install.yaml
 
-# Build the docker image
-docker-build: test
-	docker build . -t ${IMG}
-	@echo "updating kustomize image patch file for manager resource"
-	sed -i'' -e 's@image: .*@image: '"${IMG}"'@' ./config/default/manager_image_patch.yaml
+CRD_DIR=config/crd
+build-stack-package: clean $(STACK_PACKAGE_REGISTRY)
+# Copy CRDs over
+	@find $(CRD_DIR) -type f -name '*.yaml' | \
+		while read filename ; do mkdir -p $(STACK_PACKAGE_REGISTRY)/resources/$$(basename $${filename%_*});\
+		concise=$${filename#*_}; \
+		cat $$filename > \
+		$(STACK_PACKAGE_REGISTRY)/resources/$$( basename $${filename%_*} )/$$( basename $${concise/.yaml/.crd.yaml} ) \
+		; done
+	@cp -r $(STACK_PACKAGE_REGISTRY_SOURCE)/* $(STACK_PACKAGE_REGISTRY)
 
-# Push the docker image
-docker-push:
-	docker push ${IMG}
+clean: clean-stack-package
 
-# find or download controller-gen
-# download controller-gen if necessary
-controller-gen:
-ifeq (, $(shell which controller-gen))
-	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.2.0-beta.1
-CONTROLLER_GEN=$(shell go env GOPATH)/bin/controller-gen
-else
-CONTROLLER_GEN=$(shell which controller-gen)
-endif
+clean-stack-package:
+	@rm -rf $(STACK_PACKAGE)
+
+.PHONY: generate tidy build-stack-package clean clean-stack-package build image all

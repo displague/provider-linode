@@ -1,18 +1,27 @@
-module github.com/displague/stack-linode
+module github.com/displague/crossplane-provider-linode
 
-go 1.12
+go 1.13
+
+replace github.com/linode/linodego => /home/marques/.local/share/go/src/github.com/linode/linodego
+
+replace github.com/crossplane/crossplane-runtime => github.com/negz/crossplane-runtime v0.0.0-20200417025116-3face651efbf
 
 require (
-	github.com/crossplaneio/crossplane-runtime v0.0.0-20190919002909-d8050430d1b6
-	github.com/google/go-cmp v0.3.1 // indirect
-	github.com/linode/linodego v0.10.0
-	github.com/onsi/ginkgo v1.6.0
-	github.com/onsi/gomega v1.4.2
+	github.com/crossplane/crossplane v0.10.0-rc.0.20200410142608-84b1c08d1890
+	github.com/crossplane/crossplane-runtime v0.7.1-0.20200424213213-10ecf0f09a8a
+	github.com/crossplane/crossplane-tools v0.0.0-20200303232609-b3831cbb446d
+	github.com/crossplane/provider-gcp v0.8.0
+	github.com/crossplanebook/provider-template v0.0.0-20200331182914-b7c332a53f1e
+	github.com/linode/linodego v0.14.0
+	github.com/onsi/ginkgo v1.11.0
+	github.com/onsi/gomega v1.8.1
 	github.com/pkg/errors v0.8.1
-	golang.org/x/net v0.0.0-20180906233101-161cd47e91fd
-	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
-	k8s.io/api v0.0.0-20190409021203-6e4e0e4f393b
-	k8s.io/apimachinery v0.0.0-20190404173353-6a84e37a896d
-	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible
-	sigs.k8s.io/controller-runtime v0.2.2
+	golang.org/x/net v0.0.0-20191004110552-13f9640d40b9
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
+	gopkg.in/alecthomas/kingpin.v2 v2.2.6
+	k8s.io/api v0.18.0
+	k8s.io/apimachinery v0.18.0
+	k8s.io/client-go v0.18.0
+	sigs.k8s.io/controller-runtime v0.5.1-0.20200422200944-a457e2791293
+	sigs.k8s.io/controller-tools v0.2.4
 )

@@ -1,6 +1,0 @@
-spec:
-  template:
-    spec:
-      containers:
-      - name: "stack-linode-demo-controller"
-        image: "localhost:5000/stack-linode-demo"
